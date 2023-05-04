@@ -1,0 +1,61 @@
+{% load static %}
+
+  <div id="div_data_table_{{model_name}}" >
+    <table id="data_table_{{model_name}}" style="width: 100%;"></table>
+</div>
+
+<link rel="stylesheet" href="{% static 'src/style/dyn_dt.css' %}">
+
+<script type="module">
+    import {setData , setModelName} from '{% static 'data/index.js' %}'
+    const headings = [
+      {% for item in headings %}
+        '{{ item }}',
+      {% endfor %}
+    ];
+
+    const data = [
+      {% for item in data %}
+          [{% for i in item %}
+              '{{ i }}',
+          {% endfor %}],
+      {% endfor %}
+    ];
+
+    const isDate = [
+        {% for item in is_date %}
+            '{{ item }}',
+        {% endfor %}
+    ];
+    
+    
+    setData(headings , data , isDate);
+    
+    setModelName(
+      '{{ model_name }}'
+      );
+      
+      </script>
+
+<script type="module">
+  import {DataTable} from '{% static 'data/DataTable.js' %}'
+  import {modelName, myData} from '{% static 'data/index.js' %}'
+
+let newDT=new DataTable(
+                          [10,25,50], // entries Items
+                        parseInt(sessionStorage.getItem('entries_{{ model_name }}')) || 10 // entry
+                        ,'{{ model_name }}' // Data Table Title
+                        ,myData.data
+                        ,myData.headings // headeings Of Columns
+                        ,'{{current_page}}' // 
+                        ,'{{total_pages}}'
+                        ,'{{has_next}}'
+                        ,'{{has_prev}}'
+                        ,myData.isDate)
+
+window.onbeforeunload=()=>{
+sessionStorage.clear()
+}
+
+</script>
+
